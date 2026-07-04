@@ -6,7 +6,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.stream.Collectors;
@@ -42,6 +44,19 @@ public final class DBUtil {
                     statement.execute(command);
                 }
             }
+            ensureOrderPaymentMethodColumn(connection);
+        }
+    }
+
+    private static void ensureOrderPaymentMethodColumn(Connection connection) throws SQLException {
+        DatabaseMetaData metaData = connection.getMetaData();
+        try (ResultSet columns = metaData.getColumns(connection.getCatalog(), null, "orders", "payment_method")) {
+            if (columns.next()) {
+                return;
+            }
+        }
+        try (Statement statement = connection.createStatement()) {
+            statement.execute("ALTER TABLE orders ADD COLUMN payment_method VARCHAR(50) DEFAULT 'Online Payment'");
         }
     }
 

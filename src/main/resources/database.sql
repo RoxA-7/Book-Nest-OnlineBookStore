@@ -41,6 +41,7 @@ CREATE TABLE IF NOT EXISTS orders (
     total_price DECIMAL(10, 2),
     status VARCHAR(20) DEFAULT 'Pending',
     address VARCHAR(500),
+    payment_method VARCHAR(50) DEFAULT 'Online Payment',
     create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT orders_ibfk_1 FOREIGN KEY (user_id) REFERENCES users(user_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

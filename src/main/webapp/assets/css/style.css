@@ -15,6 +15,7 @@
     --shadow: 0 24px 70px rgba(55, 42, 31, 0.12);
     --small-shadow: 0 12px 32px rgba(55, 42, 31, 0.09);
     --radius: 8px;
+    --content: min(1360px, calc(100% - 48px));
 }
 
 * {
@@ -72,7 +73,7 @@ button:disabled {
     position: sticky;
     top: 12px;
     z-index: 20;
-    width: min(1160px, calc(100% - 32px));
+    width: var(--content);
     min-height: 68px;
     margin: 12px auto 0;
     padding: 10px 12px;
@@ -215,16 +216,16 @@ button:disabled {
 }
 
 .page-shell {
-    width: min(1160px, calc(100% - 32px));
+    width: var(--content);
     margin: 34px auto 0;
 }
 
 .hero {
     min-height: 520px;
     display: grid;
-    grid-template-columns: minmax(0, 1.1fr) minmax(340px, 0.9fr);
+    grid-template-columns: minmax(0, 1fr) minmax(460px, 0.9fr);
     align-items: center;
-    gap: 42px;
+    gap: 72px;
     padding: 44px 0 54px;
 }
 
@@ -377,18 +378,18 @@ p {
 
 .book-0 {
     top: 30px;
-    left: 28px;
+    left: 80px;
 }
 
 .book-1 {
     top: 158px;
-    right: 6px;
+    right: 42px;
     animation-delay: 700ms;
 }
 
 .book-2 {
     bottom: 18px;
-    left: 76px;
+    left: 150px;
     animation-delay: 1300ms;
 }
 
@@ -540,7 +541,7 @@ textarea:focus {
 
 .book-grid {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 16px;
 }
 
@@ -782,6 +783,118 @@ textarea:focus {
     font-size: 24px;
 }
 
+.checkout-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 380px;
+    gap: 16px;
+    align-items: start;
+}
+
+.checkout-form {
+    min-height: 420px;
+}
+
+.payment-label {
+    margin-top: 8px;
+}
+
+.payment-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.payment-grid label {
+    min-height: 58px;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 12px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: rgba(255, 255, 255, 0.62);
+}
+
+.payment-grid input {
+    width: auto;
+    height: auto;
+}
+
+.order-list {
+    display: grid;
+    gap: 14px;
+}
+
+.order-card {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: var(--small-shadow);
+    backdrop-filter: blur(16px);
+    padding: 18px;
+}
+
+.order-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 16px;
+    align-items: start;
+}
+
+.order-head h2 {
+    margin: 12px 0 8px;
+}
+
+.order-head p {
+    color: var(--muted);
+    line-height: 1.6;
+}
+
+.order-total {
+    text-align: right;
+}
+
+.order-total span {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.order-total strong {
+    font-size: 24px;
+}
+
+.order-items {
+    margin-top: 12px;
+    border-top: 1px solid var(--line);
+}
+
+.order-item-line {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 70px 110px;
+    gap: 10px;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+    color: var(--muted);
+}
+
+.order-item-line strong {
+    color: var(--text);
+    text-align: right;
+}
+
+.order-status-form {
+    display: grid;
+    grid-template-columns: minmax(160px, 220px) auto;
+    gap: 10px;
+    margin-top: 14px;
+    justify-content: end;
+}
+
 .empty-state {
     padding: 54px 24px;
     text-align: center;
@@ -886,7 +999,7 @@ textarea:focus {
     bottom: 12px;
     transform: translateX(-50%);
     z-index: 25;
-    width: min(1160px, calc(100% - 32px));
+    width: var(--content);
     min-height: 46px;
     margin: 0;
     padding: 0 14px;
@@ -928,7 +1041,8 @@ textarea:focus {
     .hero,
     .auth-panel,
     .cart-layout,
-    .admin-layout {
+    .admin-layout,
+    .checkout-layout {
         grid-template-columns: 1fr;
     }
 
@@ -964,6 +1078,10 @@ textarea:focus {
 
     .admin-filter {
         grid-template-columns: 1fr 1fr;
+    }
+
+    .payment-grid {
+        grid-template-columns: 1fr;
     }
 }
 
@@ -1058,7 +1176,18 @@ textarea:focus {
     }
 
     .admin-filter,
-    .header-search {
+    .header-search,
+    .order-status-form {
         grid-template-columns: 1fr;
+    }
+
+    .order-head,
+    .order-item-line {
+        grid-template-columns: 1fr;
+    }
+
+    .order-total,
+    .order-item-line strong {
+        text-align: left;
     }
 }

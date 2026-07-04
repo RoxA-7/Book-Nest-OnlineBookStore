@@ -7,7 +7,7 @@
     <div class="auth-copy">
         <span class="eyebrow">Welcome back</span>
         <h1>登录后继续整理你的阅读书单。</h1>
-        <p>管理员登录后可以进入后台维护图书信息。</p>
+        <p>登录后可以保存购物车、完成结算，并查看自己的历史订单和订单状态。</p>
     </div>
     <form class="form-card" action="${pageContext.request.contextPath}/login" method="post">
         <c:if test="${not empty error}"><div class="form-error">${error}</div></c:if>

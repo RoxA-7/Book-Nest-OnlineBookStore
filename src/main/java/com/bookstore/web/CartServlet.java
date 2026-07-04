@@ -2,7 +2,6 @@ package com.bookstore.web;
 
 import com.bookstore.dao.BookDao;
 import com.bookstore.dao.CartDao;
-import com.bookstore.dao.OrderDao;
 import com.bookstore.model.Book;
 import com.bookstore.model.CartItem;
 import com.bookstore.model.CartSummary;
@@ -28,7 +27,6 @@ import java.util.Optional;
 public class CartServlet extends HttpServlet {
     private final BookDao bookDao = new BookDao();
     private final CartDao cartDao = new CartDao();
-    private final OrderDao orderDao = new OrderDao();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -54,7 +52,7 @@ public class CartServlet extends HttpServlet {
                 return;
             }
             if ("checkout".equals(action)) {
-                checkout(request, response);
+                response.sendRedirect(request.getContextPath() + "/checkout");
                 return;
             }
             if ("update".equals(action)) {
@@ -124,26 +122,7 @@ public class CartServlet extends HttpServlet {
         }
     }
 
-    private void checkout(HttpServletRequest request, HttpServletResponse response)
-            throws SQLException, IOException {
-        User user = currentUser(request);
-        if (user == null) {
-            request.getSession().setAttribute("toast", "请先登录后再结算");
-            response.sendRedirect(request.getContextPath() + "/login");
-            return;
-        }
-        CartSummary summary = buildSummary(cartDao.findCart(user.getId()));
-        if (summary.getItems().isEmpty()) {
-            request.getSession().setAttribute("toast", "书单为空，暂时不能结算");
-            response.sendRedirect(request.getContextPath() + "/cart");
-            return;
-        }
-        long orderId = orderDao.createOrder(user.getId(), summary);
-        request.getSession().setAttribute("toast", "结算成功，订单号 #" + orderId);
-        response.sendRedirect(request.getContextPath() + "/cart");
-    }
-
-    private Map<Long, Integer> resolveCart(HttpServletRequest request) throws SQLException {
+    Map<Long, Integer> resolveCart(HttpServletRequest request) throws SQLException {
         User user = currentUser(request);
         return user == null ? sessionCart(request) : cartDao.findCart(user.getId());
     }
@@ -159,7 +138,7 @@ public class CartServlet extends HttpServlet {
         return newCart;
     }
 
-    private CartSummary buildSummary(Map<Long, Integer> cart) throws SQLException {
+    CartSummary buildSummary(Map<Long, Integer> cart) throws SQLException {
         List<CartItem> items = new ArrayList<>();
         int totalQuantity = 0;
         BigDecimal totalPrice = BigDecimal.ZERO;

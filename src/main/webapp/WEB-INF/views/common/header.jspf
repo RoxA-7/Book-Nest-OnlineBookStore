@@ -20,11 +20,15 @@
     </a>
     <nav class="nav-links" aria-label="主导航">
         <a class="${currentPage == 'books' ? 'active' : ''}" href="${pageContext.request.contextPath}/books">书店</a>
-        <a class="${currentPage == 'cart' ? 'active' : ''}" href="${pageContext.request.contextPath}/cart">
+        <a class="${currentPage == 'cart' || currentPage == 'checkout' ? 'active' : ''}" href="${pageContext.request.contextPath}/cart">
             书单<c:if test="${cartCount > 0}"><span class="nav-count">${cartCount}</span></c:if>
         </a>
+        <c:if test="${not empty sessionScope.currentUser}">
+            <a class="${currentPage == 'orders' ? 'active' : ''}" href="${pageContext.request.contextPath}/orders">订单</a>
+        </c:if>
         <c:if test="${not empty sessionScope.currentUser && sessionScope.currentUser.admin}">
             <a class="${currentPage == 'admin' ? 'active' : ''}" href="${pageContext.request.contextPath}/admin/books">后台</a>
+            <a class="${currentPage == 'adminOrders' ? 'active' : ''}" href="${pageContext.request.contextPath}/admin/orders">订单管理</a>
         </c:if>
     </nav>
     <form class="header-search" action="${pageContext.request.contextPath}/books" method="get" role="search">

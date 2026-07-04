@@ -7,7 +7,7 @@
     <div class="auth-copy">
         <span class="eyebrow">Create account</span>
         <h1>创建账号，保存你的选书节奏。</h1>
-        <p>注册后可以登录浏览书店，并持续维护个人书单。</p>
+        <p>注册后可以登录浏览书店、维护个人书单，并追踪订单状态。</p>
     </div>
     <form class="form-card" action="${pageContext.request.contextPath}/register" method="post">
         <c:if test="${not empty error}"><div class="form-error">${error}</div></c:if>

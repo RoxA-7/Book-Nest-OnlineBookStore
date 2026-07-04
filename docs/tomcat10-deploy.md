@@ -1,4 +1,4 @@
-# Tomcat 10.1.55 + MySQL 部署说明
+# Tomcat 10.1.54 + MySQL 部署说明
 
 本项目使用 Tomcat 10.1.x 对应的 Jakarta EE 包名：
 
@@ -84,7 +84,7 @@ set "CATALINA_OPTS=%CATALINA_OPTS% -Dbookstore.jdbc.user=root -Dbookstore.jdbc.p
 
 如果 `setenv.bat` 不存在，可以新建。
 
-## 4. 部署到 Tomcat 10.1.55
+## 4. 部署到 Tomcat 10.1.54
 
 假设 Tomcat 解压目录为 `%CATALINA_HOME%`：
 

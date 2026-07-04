@@ -9,7 +9,7 @@
         <span class="eyebrow">Admin</span>
         <h1>图书后台管理</h1>
     </div>
-    <a class="ghost-button" href="${pageContext.request.contextPath}/books">回到书店</a>
+    <a class="ghost-button" href="${pageContext.request.contextPath}/admin/orders">查看订单</a>
 </section>
 
 <section class="stats-row reveal">
