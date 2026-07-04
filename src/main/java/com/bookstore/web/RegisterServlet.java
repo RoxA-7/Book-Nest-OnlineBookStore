@@ -7,6 +7,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -17,6 +18,7 @@ public class RegisterServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        request.setAttribute("currentPage", "register");
         request.getRequestDispatcher("/WEB-INF/views/register.jsp").forward(request, response);
     }
 
@@ -31,6 +33,7 @@ public class RegisterServlet extends HttpServlet {
             request.setAttribute("error", "请填写至少 3 位用户名、6 位密码，并确认两次密码一致");
             request.setAttribute("username", username);
             request.setAttribute("email", email);
+            request.setAttribute("currentPage", "register");
             request.getRequestDispatcher("/WEB-INF/views/register.jsp").forward(request, response);
             return;
         }
@@ -39,6 +42,7 @@ public class RegisterServlet extends HttpServlet {
                 request.setAttribute("error", "用户名已存在，请换一个更特别的名字");
                 request.setAttribute("username", username);
                 request.setAttribute("email", email);
+                request.setAttribute("currentPage", "register");
                 request.getRequestDispatcher("/WEB-INF/views/register.jsp").forward(request, response);
                 return;
             }
@@ -54,4 +58,3 @@ public class RegisterServlet extends HttpServlet {
         return value == null ? "" : value.trim();
     }
 }
-

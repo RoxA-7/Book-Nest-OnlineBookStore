@@ -8,6 +8,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -19,11 +20,17 @@ public class AdminBookServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String category = trim(request.getParameter("category"));
+        String keyword = trim(request.getParameter("keyword"));
         try {
-            request.setAttribute("books", bookDao.findAll());
+            request.setAttribute("currentPage", "admin");
+            request.setAttribute("books", bookDao.findBooks(category, keyword));
             request.setAttribute("categories", bookDao.findCategories());
             request.setAttribute("bookCount", bookDao.countAll());
             request.setAttribute("lowStockCount", bookDao.countLowStock());
+            request.setAttribute("selectedCategory", category);
+            request.setAttribute("keyword", keyword);
+            request.setAttribute("headerKeyword", keyword);
             request.getRequestDispatcher("/WEB-INF/views/admin/books.jsp").forward(request, response);
         } catch (SQLException e) {
             throw new ServletException("Failed to load admin books", e);
@@ -62,7 +69,7 @@ public class AdminBookServlet extends HttpServlet {
         book.setPrice(new BigDecimal(required(request.getParameter("price"))));
         book.setStock(Integer.parseInt(required(request.getParameter("stock"))));
         book.setDescription(required(request.getParameter("description")));
-        book.setCoverColor(required(request.getParameter("coverColor")));
+        book.setCoverColor(request.getParameter("coverColor"));
         book.setFeatured("on".equals(request.getParameter("featured")));
         return book;
     }
@@ -74,6 +81,10 @@ public class AdminBookServlet extends HttpServlet {
         return value.trim();
     }
 
+    private String trim(String value) {
+        return value == null ? "" : value.trim();
+    }
+
     private long parseLong(String value) {
         try {
             return Long.parseLong(value);
@@ -82,4 +93,3 @@ public class AdminBookServlet extends HttpServlet {
         }
     }
 }
-

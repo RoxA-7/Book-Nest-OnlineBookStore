@@ -19,12 +19,18 @@
         </span>
     </a>
     <nav class="nav-links" aria-label="主导航">
-        <a href="${pageContext.request.contextPath}/books">书店</a>
-        <a href="${pageContext.request.contextPath}/cart">书单<c:if test="${not empty sessionScope.cart}"><span class="nav-count">${sessionScope.cart.size()}</span></c:if></a>
+        <a class="${currentPage == 'books' ? 'active' : ''}" href="${pageContext.request.contextPath}/books">书店</a>
+        <a class="${currentPage == 'cart' ? 'active' : ''}" href="${pageContext.request.contextPath}/cart">
+            书单<c:if test="${cartCount > 0}"><span class="nav-count">${cartCount}</span></c:if>
+        </a>
         <c:if test="${not empty sessionScope.currentUser && sessionScope.currentUser.admin}">
-            <a href="${pageContext.request.contextPath}/admin/books">后台</a>
+            <a class="${currentPage == 'admin' ? 'active' : ''}" href="${pageContext.request.contextPath}/admin/books">后台</a>
         </c:if>
     </nav>
+    <form class="header-search" action="${pageContext.request.contextPath}/books" method="get" role="search">
+        <input name="keyword" value="${headerKeyword}" placeholder="Search books or authors" aria-label="Search books or authors">
+        <button class="search-button" type="submit">搜索</button>
+    </form>
     <div class="account-actions">
         <c:choose>
             <c:when test="${not empty sessionScope.currentUser}">
@@ -34,8 +40,8 @@
                 </form>
             </c:when>
             <c:otherwise>
-                <a class="ghost-button" href="${pageContext.request.contextPath}/login">登录</a>
-                <a class="primary-button compact" href="${pageContext.request.contextPath}/register">注册</a>
+                <a class="ghost-button ${currentPage == 'login' ? 'active' : ''}" href="${pageContext.request.contextPath}/login">登录</a>
+                <a class="primary-button compact ${currentPage == 'register' ? 'active' : ''}" href="${pageContext.request.contextPath}/register">注册</a>
             </c:otherwise>
         </c:choose>
     </div>

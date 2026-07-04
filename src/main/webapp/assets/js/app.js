@@ -40,3 +40,12 @@ document.querySelectorAll(".book-card").forEach((card) => {
         card.style.transform = "";
     });
 });
+
+document.querySelectorAll("[data-confirm]").forEach((button) => {
+    button.addEventListener("click", (event) => {
+        const message = button.getAttribute("data-confirm");
+        if (message && !window.confirm(message)) {
+            event.preventDefault();
+        }
+    });
+});

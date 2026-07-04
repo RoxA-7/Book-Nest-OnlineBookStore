@@ -55,6 +55,10 @@
                 <div class="summary-row"><span>总数量</span><strong>${cartSummary.totalQuantity}</strong></div>
                 <div class="summary-row total"><span>合计</span><strong>￥<fmt:formatNumber value="${cartSummary.totalPrice}" minFractionDigits="2"/></strong></div>
                 <form action="${pageContext.request.contextPath}/cart" method="post">
+                    <input type="hidden" name="action" value="checkout">
+                    <button class="primary-button full" type="submit">模拟结算</button>
+                </form>
+                <form action="${pageContext.request.contextPath}/cart" method="post">
                     <input type="hidden" name="action" value="clear">
                     <button class="ghost-button full" type="submit">清空书单</button>
                 </form>

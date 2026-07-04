@@ -20,12 +20,14 @@ public class HomeServlet extends HttpServlet {
         String category = request.getParameter("category");
         String keyword = request.getParameter("keyword");
         try {
+            request.setAttribute("currentPage", "books");
             request.setAttribute("books", bookDao.findBooks(category, keyword));
             request.setAttribute("featuredBooks", bookDao.findFeatured());
             request.setAttribute("categories", bookDao.findCategories());
             request.setAttribute("bookCount", bookDao.countAll());
             request.setAttribute("selectedCategory", category == null ? "" : category);
             request.setAttribute("keyword", keyword == null ? "" : keyword);
+            request.setAttribute("headerKeyword", keyword == null ? "" : keyword);
             request.getRequestDispatcher("/WEB-INF/views/home.jsp").forward(request, response);
         } catch (SQLException e) {
             throw new ServletException("Failed to load books", e);

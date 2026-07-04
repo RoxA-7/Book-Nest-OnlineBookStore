@@ -1,6 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
-<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <c:set var="pageTitle" value="后台管理 - Book Nest" scope="request"/>
 <%@ include file="../common/header.jspf" %>
@@ -28,6 +27,18 @@
     </div>
 </section>
 
+<form class="admin-filter reveal" action="${pageContext.request.contextPath}/admin/books" method="get">
+    <input name="keyword" value="${keyword}" placeholder="搜索书名或作者">
+    <select name="category">
+        <option value="">全部分类</option>
+        <c:forEach items="${categories}" var="category">
+            <option value="${category}" <c:if test="${selectedCategory == category}">selected</c:if>>${category}</option>
+        </c:forEach>
+    </select>
+    <button class="primary-button compact" type="submit">筛选</button>
+    <a class="ghost-button compact" href="${pageContext.request.contextPath}/admin/books">重置</a>
+</form>
+
 <c:if test="${not empty error}"><div class="form-error admin-error">${error}</div></c:if>
 
 <section class="admin-layout">
@@ -40,15 +51,7 @@
         <label>分类<input name="category" list="categoryList" required></label>
         <label>价格<input name="price" type="number" step="0.01" min="0" required></label>
         <label>库存<input name="stock" type="number" min="0" required></label>
-        <label>封面色彩
-            <select name="coverColor" required>
-                <option value="linear-gradient(145deg, #f3b27c, #d96f45)">暖橘</option>
-                <option value="linear-gradient(145deg, #8fb7ff, #4d73c8)">蓝调</option>
-                <option value="linear-gradient(145deg, #9dd8c8, #3f9d87)">青绿</option>
-                <option value="linear-gradient(145deg, #f5b8c7, #c95d76)">玫瑰</option>
-                <option value="linear-gradient(145deg, #d7c2ff, #8264c9)">淡紫</option>
-            </select>
-        </label>
+        <input type="hidden" name="coverColor" value="linear-gradient(145deg, #f3b27c, #d96f45)">
         <label>简介<textarea name="description" rows="4" required></textarea></label>
         <label class="check-line"><input name="featured" type="checkbox"> 设为精选</label>
         <button class="primary-button full" type="submit">上架图书</button>
@@ -79,11 +82,11 @@
                 <input name="stock" type="number" min="0" value="${book.stock}" required>
                 <div class="table-actions">
                     <input type="hidden" name="coverColor" value="${book.coverColor}">
-                    <textarea name="description" hidden>${book.description}</textarea>
                     <label class="mini-check"><input name="featured" type="checkbox" <c:if test="${book.featured}">checked</c:if>> 精选</label>
                     <button class="ghost-button" name="action" value="update" type="submit">保存</button>
-                    <button class="text-button danger" name="action" value="delete" type="submit" formnovalidate>删除</button>
+                    <button class="text-button danger" name="action" value="delete" type="submit" formnovalidate data-confirm="确定删除这本书吗？">删除</button>
                 </div>
+                <textarea class="row-description" name="description" rows="2" required>${book.description}</textarea>
             </form>
         </c:forEach>
     </div>

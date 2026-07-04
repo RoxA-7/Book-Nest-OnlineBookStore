@@ -35,11 +35,7 @@
         <span class="eyebrow">Catalog</span>
         <h2>图书目录</h2>
     </div>
-    <form class="search-form" action="${pageContext.request.contextPath}/books" method="get">
-        <input type="hidden" name="category" value="${selectedCategory}">
-        <input name="keyword" value="${keyword}" placeholder="搜索书名或作者">
-        <button class="primary-button compact" type="submit">搜索</button>
-    </form>
+    <a class="ghost-button" href="${pageContext.request.contextPath}/cart">查看书单</a>
 </section>
 
 <section class="category-strip reveal" aria-label="图书分类">
@@ -47,6 +43,9 @@
     <c:forEach items="${categories}" var="category">
         <c:url var="categoryUrl" value="/books">
             <c:param name="category" value="${category}"/>
+            <c:if test="${not empty keyword}">
+                <c:param name="keyword" value="${keyword}"/>
+            </c:if>
         </c:url>
         <a class="${selectedCategory == category ? 'active' : ''}" href="${categoryUrl}">${category}</a>
     </c:forEach>
