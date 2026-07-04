@@ -47,6 +47,7 @@ public final class DBUtil {
             ensureOrderPaymentMethodColumn(connection);
             ensureOrderNoColumn(connection);
             backfillOrderNumbers(connection);
+            backfillBookCategories(connection);
         }
     }
 
@@ -78,6 +79,13 @@ public final class DBUtil {
         try (Statement statement = connection.createStatement()) {
             statement.execute("UPDATE orders SET order_no = CONCAT('BN', DATE_FORMAT(COALESCE(create_time, NOW()), '%Y%m%d'), '-', LPAD(order_id, 6, '0')) "
                     + "WHERE order_no IS NULL OR order_no = ''");
+        }
+    }
+
+    private static void backfillBookCategories(Connection connection) throws SQLException {
+        try (Statement statement = connection.createStatement()) {
+            statement.execute("INSERT IGNORE INTO book_categories (book_id, category_id) "
+                    + "SELECT book_id, category_id FROM books WHERE category_id IS NOT NULL");
         }
     }
 

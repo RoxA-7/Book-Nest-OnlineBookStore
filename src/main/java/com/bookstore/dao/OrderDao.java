@@ -229,7 +229,10 @@ public class OrderDao {
 
     private List<OrderItem> findItems(long orderId) throws SQLException {
         String sql = "SELECT oi.item_id, oi.order_id, oi.quantity, oi.price, "
-                + "b.book_id, b.title, b.author, b.description, b.stock, c.category_name "
+                + "b.book_id, b.title, b.author, b.description, b.stock, "
+                + "COALESCE((SELECT GROUP_CONCAT(DISTINCT fc.category_name ORDER BY fc.category_id SEPARATOR ', ') "
+                + "FROM book_categories fbc JOIN categories fc ON fbc.category_id = fc.category_id "
+                + "WHERE fbc.book_id = b.book_id), c.category_name, 'Uncategorized') AS category_name "
                 + "FROM order_items oi "
                 + "JOIN books b ON oi.book_id = b.book_id "
                 + "LEFT JOIN categories c ON b.category_id = c.category_id "

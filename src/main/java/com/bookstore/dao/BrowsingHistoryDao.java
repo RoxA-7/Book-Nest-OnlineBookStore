@@ -34,7 +34,10 @@ public class BrowsingHistoryDao {
 
     public List<BrowsingRecord> findRecentByUser(long userId, int limit) throws SQLException {
         String sql = "SELECT h.view_count, h.last_viewed, b.book_id, b.title, b.author, b.price, b.description, "
-                + "b.stock, b.create_time, c.category_name AS category "
+                + "b.stock, b.create_time, "
+                + "COALESCE((SELECT GROUP_CONCAT(DISTINCT fc.category_name ORDER BY fc.category_id SEPARATOR ', ') "
+                + "FROM book_categories fbc JOIN categories fc ON fbc.category_id = fc.category_id "
+                + "WHERE fbc.book_id = b.book_id), c.category_name, 'Uncategorized') AS category "
                 + "FROM browsing_history h JOIN books b ON h.book_id = b.book_id "
                 + "LEFT JOIN categories c ON b.category_id = c.category_id "
                 + "WHERE h.user_id = ? ORDER BY h.last_viewed DESC LIMIT ?";
@@ -62,13 +65,17 @@ public class BrowsingHistoryDao {
     public List<StatItem> categoryStatsByUser(long userId) throws SQLException {
         String sql = "SELECT COALESCE(c.category_name, 'Uncategorized') AS label, SUM(h.view_count) AS value "
                 + "FROM browsing_history h JOIN books b ON h.book_id = b.book_id "
-                + "LEFT JOIN categories c ON b.category_id = c.category_id "
+                + "JOIN book_categories bc ON b.book_id = bc.book_id "
+                + "JOIN categories c ON bc.category_id = c.category_id "
                 + "WHERE h.user_id = ? GROUP BY label ORDER BY value DESC";
         return queryStats(sql, userId);
     }
 
     public List<StatItem> topViewedBooks(int limit) throws SQLException {
-        String sql = "SELECT b.title AS label, COALESCE(c.category_name, '') AS meta, SUM(h.view_count) AS value "
+        String sql = "SELECT b.title AS label, "
+                + "COALESCE((SELECT GROUP_CONCAT(DISTINCT fc.category_name ORDER BY fc.category_id SEPARATOR ', ') "
+                + "FROM book_categories fbc JOIN categories fc ON fbc.category_id = fc.category_id "
+                + "WHERE fbc.book_id = b.book_id), c.category_name, '') AS meta, SUM(h.view_count) AS value "
                 + "FROM browsing_history h JOIN books b ON h.book_id = b.book_id "
                 + "LEFT JOIN categories c ON b.category_id = c.category_id "
                 + "GROUP BY b.book_id, b.title, c.category_name ORDER BY value DESC LIMIT ?";

@@ -66,17 +66,27 @@
     </div>
 </section>
 
+<c:if test="${not empty keyword}">
+    <section class="search-result-note reveal">
+        已找到 <strong>${books.size()}</strong> 本与 “<strong>${keyword}</strong>” 相关的图书
+    </section>
+</c:if>
+
 <section class="book-grid">
     <c:forEach items="${books}" var="book">
-        <article class="book-card reveal">
+        <article class="book-card reveal" data-book-id="${book.id}">
             <div class="book-cover" style="background:${book.coverColor}">
                 <span>${fn:substring(book.title, 0, 1)}</span>
                 <small>${book.category}</small>
             </div>
             <div class="book-info">
                 <div class="book-meta">
-                    <span>${book.category}</span>
+                    <c:forEach items="${fn:split(book.category, ',')}" var="tag">
+                        <span>${fn:trim(tag)}</span>
+                    </c:forEach>
                     <c:if test="${book.featured}"><span>精选</span></c:if>
+                    <c:if test="${book.stock > 0 && book.stock < 10}"><span>库存不多</span></c:if>
+                    <c:if test="${book.stock <= 0}"><span>缺货</span></c:if>
                 </div>
                 <h3><c:out value="${book.highlightedTitle}" escapeXml="false"/></h3>
                 <p class="author"><c:out value="${book.highlightedAuthor}" escapeXml="false"/></p>
@@ -87,7 +97,7 @@
                 </div>
                 <div class="book-actions">
                     <a class="ghost-button compact" href="${pageContext.request.contextPath}/book?id=${book.id}">详情</a>
-                    <form action="${pageContext.request.contextPath}/favorites" method="post">
+                    <form action="${pageContext.request.contextPath}/favorites" method="post" data-preserve-scroll>
                         <input type="hidden" name="bookId" value="${book.id}">
                         <input type="hidden" name="returnTo" value="${pageContext.request.contextPath}/books">
                         <button class="ghost-button compact" type="submit">
@@ -98,10 +108,15 @@
                         </button>
                     </form>
                 </div>
-                <form action="${pageContext.request.contextPath}/cart" method="post">
+                <form action="${pageContext.request.contextPath}/cart" method="post" data-preserve-scroll>
                     <input type="hidden" name="action" value="add">
                     <input type="hidden" name="bookId" value="${book.id}">
-                    <button class="primary-button full" type="submit" <c:if test="${book.stock <= 0}">disabled</c:if>>加入书单</button>
+                    <button class="primary-button full" type="submit" <c:if test="${book.stock <= 0}">disabled</c:if>>
+                        <c:choose>
+                            <c:when test="${book.stock <= 0}">暂时缺货</c:when>
+                            <c:otherwise>加入书单</c:otherwise>
+                        </c:choose>
+                    </button>
                 </form>
             </div>
         </article>

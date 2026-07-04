@@ -45,13 +45,13 @@
                 <span aria-hidden="true">⌄</span>
             </button>
             <div class="theme-options" data-theme-options>
-                <button type="button" data-theme-value="light"><span class="theme-dot light"></span>浅色</button>
-                <button type="button" data-theme-value="dark"><span class="theme-dot dark"></span>深色</button>
-                <button type="button" data-theme-value="ink"><span class="theme-dot ink"></span>漆黑</button>
-                <button type="button" data-theme-value="ochre"><span class="theme-dot ochre"></span>暖黄</button>
-                <button type="button" data-theme-value="graphite"><span class="theme-dot graphite"></span>石墨</button>
-                <button type="button" data-theme-value="olive"><span class="theme-dot olive"></span>大禹</button>
-                <button type="button" data-theme-value="rosewood"><span class="theme-dot rosewood"></span>紫檀</button>
+                <button type="button" data-theme-value="light"><span class="theme-dot light"></span><span class="theme-name">浅色</span><span class="theme-check">✓</span></button>
+                <button type="button" data-theme-value="dark"><span class="theme-dot dark"></span><span class="theme-name">深色</span><span class="theme-check">✓</span></button>
+                <button type="button" data-theme-value="ink"><span class="theme-dot ink"></span><span class="theme-name">漆黑</span><span class="theme-check">✓</span></button>
+                <button type="button" data-theme-value="ochre"><span class="theme-dot ochre"></span><span class="theme-name">暖黄</span><span class="theme-check">✓</span></button>
+                <button type="button" data-theme-value="graphite"><span class="theme-dot graphite"></span><span class="theme-name">石墨</span><span class="theme-check">✓</span></button>
+                <button type="button" data-theme-value="olive"><span class="theme-dot olive"></span><span class="theme-name">大禹</span><span class="theme-check">✓</span></button>
+                <button type="button" data-theme-value="rosewood"><span class="theme-dot rosewood"></span><span class="theme-name">紫檀</span><span class="theme-check">✓</span></button>
             </div>
         </div>
         <c:choose>

@@ -16,7 +16,10 @@ import java.util.Set;
 
 public class FavoriteDao {
     private static final String FAVORITE_BOOK_SELECT = "SELECT b.book_id, b.title, b.author, b.price, b.description, "
-            + "b.stock, b.create_time, c.category_name AS category "
+            + "b.stock, b.create_time, "
+            + "COALESCE((SELECT GROUP_CONCAT(DISTINCT fc.category_name ORDER BY fc.category_id SEPARATOR ', ') "
+            + "FROM book_categories fbc JOIN categories fc ON fbc.category_id = fc.category_id "
+            + "WHERE fbc.book_id = b.book_id), c.category_name, 'Uncategorized') AS category "
             + "FROM favorites f JOIN books b ON f.book_id = b.book_id "
             + "LEFT JOIN categories c ON b.category_id = c.category_id ";
 
@@ -79,7 +82,10 @@ public class FavoriteDao {
     }
 
     public List<StatItem> topFavoritedBooks(int limit) throws SQLException {
-        String sql = "SELECT b.title AS label, COALESCE(c.category_name, '') AS meta, COUNT(*) AS value "
+        String sql = "SELECT b.title AS label, "
+                + "COALESCE((SELECT GROUP_CONCAT(DISTINCT fc.category_name ORDER BY fc.category_id SEPARATOR ', ') "
+                + "FROM book_categories fbc JOIN categories fc ON fbc.category_id = fc.category_id "
+                + "WHERE fbc.book_id = b.book_id), c.category_name, '') AS meta, COUNT(*) AS value "
                 + "FROM favorites f JOIN books b ON f.book_id = b.book_id "
                 + "LEFT JOIN categories c ON b.category_id = c.category_id "
                 + "GROUP BY b.book_id, b.title, c.category_name ORDER BY value DESC LIMIT ?";

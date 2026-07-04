@@ -42,20 +42,31 @@
 <c:if test="${not empty error}"><div class="form-error admin-error">${error}</div></c:if>
 
 <section class="admin-layout">
-    <form class="form-card admin-form reveal" action="${pageContext.request.contextPath}/admin/books" method="post">
-        <input type="hidden" name="action" value="create">
-        <span class="eyebrow">New book</span>
-        <h2>上架新图书</h2>
-        <label>书名<input name="title" required></label>
-        <label>作者<input name="author" required></label>
-        <label>分类<input name="category" list="categoryList" required></label>
-        <label>价格<input name="price" type="number" step="0.01" min="0" required></label>
-        <label>库存<input name="stock" type="number" min="0" required></label>
-        <input type="hidden" name="coverColor" value="linear-gradient(145deg, #f3b27c, #d96f45)">
-        <label>简介<textarea name="description" rows="4" required></textarea></label>
-        <label class="check-line"><input name="featured" type="checkbox"> 设为精选</label>
-        <button class="primary-button full" type="submit">上架图书</button>
-    </form>
+    <div class="admin-side reveal">
+        <form class="form-card admin-form" action="${pageContext.request.contextPath}/admin/books" method="post">
+            <input type="hidden" name="action" value="create">
+            <span class="eyebrow">New book</span>
+            <h2>上架新图书</h2>
+            <label>书名<input name="title" required></label>
+            <label>作者<input name="author" required></label>
+            <label>分类标签<input name="category" list="categoryList" placeholder="多个分类用逗号分隔" required></label>
+            <label>价格<input name="price" type="number" step="0.01" min="0" required></label>
+            <label>库存<input name="stock" type="number" min="0" required></label>
+            <input type="hidden" name="coverColor" value="linear-gradient(145deg, #f3b27c, #d96f45)">
+            <label>简介<textarea name="description" rows="4" required></textarea></label>
+            <label class="check-line"><input name="featured" type="checkbox"> 设为精选</label>
+            <button class="primary-button full" type="submit">上架图书</button>
+        </form>
+
+        <form class="form-card category-form" action="${pageContext.request.contextPath}/admin/books" method="post">
+            <input type="hidden" name="action" value="createCategory">
+            <span class="eyebrow">New category</span>
+            <h2>添加图书分类</h2>
+            <label>分类名称<input name="categoryName" placeholder="例如 Poetry" required></label>
+            <label>分类说明<textarea name="categoryDescription" rows="3" placeholder="这个分类主要收录什么书"></textarea></label>
+            <button class="ghost-button full" type="submit">添加分类</button>
+        </form>
+    </div>
 
     <div class="admin-table reveal">
         <div class="table-head">
@@ -77,7 +88,7 @@
                         <input name="author" value="${book.author}" required>
                     </div>
                 </div>
-                <input name="category" value="${book.category}" list="categoryList" required>
+                <input name="category" value="${book.category}" list="categoryList" title="多个分类用逗号分隔" required>
                 <input name="price" type="number" step="0.01" min="0" value="${book.price}" required>
                 <input name="stock" type="number" min="0" value="${book.stock}" required>
                 <div class="table-actions">

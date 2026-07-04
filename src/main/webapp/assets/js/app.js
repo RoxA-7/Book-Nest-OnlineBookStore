@@ -3,22 +3,38 @@ const topbar = document.querySelector("[data-glass]");
 const savedTheme = window.localStorage.getItem("booknest-theme") || "light";
 document.body.dataset.theme = savedTheme;
 
-const themeNames = {
-    light: "浅色",
-    dark: "深色",
-    ink: "漆黑",
-    ochre: "暖黄",
-    graphite: "石墨",
-    olive: "大禹",
-    rosewood: "紫檀"
+const restoreScroll = () => {
+    const savedY = window.sessionStorage.getItem("booknest-scroll-y");
+    const savedBookId = window.sessionStorage.getItem("booknest-focus-book");
+    if (savedY !== null) {
+        window.requestAnimationFrame(() => {
+            window.scrollTo({ top: Number(savedY), left: 0, behavior: "auto" });
+            window.sessionStorage.removeItem("booknest-scroll-y");
+        });
+    }
+    if (savedBookId) {
+        window.requestAnimationFrame(() => {
+            const card = document.querySelector(`[data-book-id="${savedBookId}"]`);
+            if (card) {
+                card.classList.add("just-updated");
+                window.setTimeout(() => card.classList.remove("just-updated"), 1400);
+            }
+            window.sessionStorage.removeItem("booknest-focus-book");
+        });
+    }
 };
+
+restoreScroll();
 
 document.querySelectorAll("[data-theme-menu]").forEach((menu) => {
     const trigger = menu.querySelector("[data-theme-trigger]");
     const label = menu.querySelector("[data-theme-label]");
     const options = menu.querySelector("[data-theme-options]");
     const syncLabel = () => {
-        label.textContent = themeNames[document.body.dataset.theme] || themeNames.light;
+        const active = options.querySelector(`[data-theme-value="${document.body.dataset.theme}"]`)
+                || options.querySelector("[data-theme-value=\"light\"]");
+        const activeName = active ? active.querySelector(".theme-name") : null;
+        label.textContent = activeName ? activeName.textContent.trim() : label.textContent;
         options.querySelectorAll("[data-theme-value]").forEach((button) => {
             button.classList.toggle("active", button.dataset.themeValue === document.body.dataset.theme);
         });
@@ -102,6 +118,16 @@ document.querySelectorAll("[data-confirm]").forEach((button) => {
         const message = button.getAttribute("data-confirm");
         if (message && !window.confirm(message)) {
             event.preventDefault();
+        }
+    });
+});
+
+document.querySelectorAll("[data-preserve-scroll]").forEach((form) => {
+    form.addEventListener("submit", () => {
+        window.sessionStorage.setItem("booknest-scroll-y", String(window.scrollY));
+        const bookInput = form.querySelector("[name=\"bookId\"]");
+        if (bookInput && bookInput.value) {
+            window.sessionStorage.setItem("booknest-focus-book", bookInput.value);
         }
     });
 });

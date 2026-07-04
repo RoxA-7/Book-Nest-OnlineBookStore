@@ -718,6 +718,20 @@ textarea:focus {
     font-size: 13px;
 }
 
+.search-result-note {
+    margin: -6px 0 18px;
+    padding: 14px 16px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    color: var(--muted);
+    background: var(--card-bg);
+    box-shadow: var(--small-shadow);
+}
+
+.search-result-note strong {
+    color: var(--text);
+}
+
 .book-grid {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -737,6 +751,13 @@ textarea:focus {
 .book-card:hover {
     transform: translateY(-5px);
     border-color: rgba(179, 91, 50, 0.3);
+    box-shadow: var(--shadow);
+}
+
+.book-card.just-updated,
+.cart-item.just-updated,
+.detail-layout.just-updated {
+    outline: 3px solid color-mix(in srgb, var(--accent) 54%, transparent);
     box-shadow: var(--shadow);
 }
 
@@ -837,14 +858,14 @@ mark {
 .toast {
     position: fixed;
     right: 22px;
-    top: 94px;
+    top: 108px;
     z-index: 30;
     max-width: 320px;
     padding: 12px 14px;
     border: 1px solid rgba(92, 125, 107, 0.22);
     border-radius: var(--radius);
-    color: #244236;
-    background: rgba(236, 247, 241, 0.94);
+    color: var(--text);
+    background: var(--surface-strong);
     box-shadow: var(--small-shadow);
     animation: toastIn 260ms ease both;
 }
@@ -1433,9 +1454,15 @@ mark {
     align-items: start;
 }
 
-.admin-form {
+.admin-side {
     position: sticky;
     top: 100px;
+    display: grid;
+    gap: 14px;
+}
+
+.admin-form {
+    position: static;
 }
 
 .check-line,
@@ -1561,7 +1588,7 @@ mark {
     top: calc(100% + 8px);
     right: 0;
     z-index: 60;
-    width: 150px;
+    width: 176px;
     display: none;
     padding: 6px;
     border: 1px solid var(--line);
@@ -1576,7 +1603,7 @@ mark {
 }
 
 .theme-options button {
-    min-height: 34px;
+    min-height: 38px;
     padding: 0 9px;
     display: flex;
     align-items: center;
@@ -1587,11 +1614,26 @@ mark {
     background: transparent;
     font-weight: 700;
     text-align: left;
+    white-space: nowrap;
 }
 
 .theme-options button:hover,
 .theme-options button.active {
     background: var(--accent-soft);
+}
+
+.theme-name {
+    flex: 1;
+}
+
+.theme-check {
+    opacity: 0;
+    color: var(--accent-strong);
+    font-weight: 900;
+}
+
+.theme-options button.active .theme-check {
+    opacity: 1;
 }
 
 .theme-dot {
@@ -1666,7 +1708,7 @@ mark {
     }
 
     .summary-card,
-    .admin-form {
+    .admin-side {
         position: static;
     }
 

@@ -5,7 +5,7 @@
 <c:set var="pageTitle" value="${book.title} - Book Nest" scope="request"/>
 <%@ include file="common/header.jspf" %>
 
-<section class="detail-layout reveal">
+<section class="detail-layout reveal" data-book-id="${book.id}">
     <div class="detail-cover" style="background:${book.coverColor}">
         <span>${fn:substring(book.title, 0, 1)}</span>
     </div>
@@ -20,12 +20,17 @@
             <div><strong>${book.featured ? 'Yes' : 'No'}</strong><span>精选</span></div>
         </div>
         <div class="detail-actions">
-            <form action="${pageContext.request.contextPath}/cart" method="post">
+            <form action="${pageContext.request.contextPath}/cart" method="post" data-preserve-scroll>
                 <input type="hidden" name="action" value="add">
                 <input type="hidden" name="bookId" value="${book.id}">
-                <button class="primary-button" type="submit" <c:if test="${book.stock <= 0}">disabled</c:if>>加入书单</button>
+                <button class="primary-button" type="submit" <c:if test="${book.stock <= 0}">disabled</c:if>>
+                    <c:choose>
+                        <c:when test="${book.stock <= 0}">暂时缺货</c:when>
+                        <c:otherwise>加入书单</c:otherwise>
+                    </c:choose>
+                </button>
             </form>
-            <form action="${pageContext.request.contextPath}/favorites" method="post">
+            <form action="${pageContext.request.contextPath}/favorites" method="post" data-preserve-scroll>
                 <input type="hidden" name="bookId" value="${book.id}">
                 <input type="hidden" name="returnTo" value="${pageContext.request.contextPath}/book?id=${book.id}">
                 <button class="ghost-button" type="submit">
@@ -49,7 +54,7 @@
 
 <section class="book-grid related-grid">
     <c:forEach items="${relatedBooks}" var="related">
-        <article class="book-card reveal">
+        <article class="book-card reveal" data-book-id="${related.id}">
             <div class="book-cover" style="background:${related.coverColor}">
                 <span>${fn:substring(related.title, 0, 1)}</span>
                 <small>${related.category}</small>

@@ -45,6 +45,9 @@ public class AdminBookServlet extends HttpServlet {
             if ("delete".equals(action)) {
                 bookDao.delete(parseLong(request.getParameter("id")));
                 request.getSession().setAttribute("toast", "图书已删除");
+            } else if ("createCategory".equals(action)) {
+                bookDao.createCategory(required(request.getParameter("categoryName")), trim(request.getParameter("categoryDescription")));
+                request.getSession().setAttribute("toast", "分类已添加");
             } else if ("update".equals(action)) {
                 Book book = readBook(request);
                 book.setId(parseLong(request.getParameter("id")));

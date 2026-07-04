@@ -24,7 +24,7 @@
     <c:otherwise>
         <section class="book-grid">
             <c:forEach items="${favorites}" var="book">
-                <article class="book-card reveal">
+                <article class="book-card reveal" data-book-id="${book.id}">
                     <div class="book-cover" style="background:${book.coverColor}">
                         <span>${fn:substring(book.title, 0, 1)}</span>
                         <small>${book.category}</small>
@@ -39,14 +39,14 @@
                         </div>
                         <div class="book-actions">
                             <a class="ghost-button compact" href="${pageContext.request.contextPath}/book?id=${book.id}">详情</a>
-                            <form action="${pageContext.request.contextPath}/favorites" method="post">
+                            <form action="${pageContext.request.contextPath}/favorites" method="post" data-preserve-scroll>
                                 <input type="hidden" name="action" value="addCart">
                                 <input type="hidden" name="bookId" value="${book.id}">
                                 <input type="hidden" name="returnTo" value="${pageContext.request.contextPath}/favorites">
                                 <button class="primary-button compact" type="submit">加入书单</button>
                             </form>
                         </div>
-                        <form action="${pageContext.request.contextPath}/favorites" method="post">
+                        <form action="${pageContext.request.contextPath}/favorites" method="post" data-preserve-scroll>
                             <input type="hidden" name="action" value="remove">
                             <input type="hidden" name="bookId" value="${book.id}">
                             <input type="hidden" name="returnTo" value="${pageContext.request.contextPath}/favorites">

@@ -25,7 +25,7 @@
         <section class="cart-layout">
             <div class="cart-list">
                 <c:forEach items="${cartSummary.items}" var="item">
-                    <article class="cart-item reveal">
+                    <article class="cart-item reveal" data-book-id="${item.book.id}">
                         <div class="mini-cover" style="background:${item.book.coverColor}">
                             <span>${fn:substring(item.book.title, 0, 1)}</span>
                         </div>
@@ -34,13 +34,13 @@
                             <p>${item.book.author} · ${item.book.category}</p>
                             <strong>￥<fmt:formatNumber value="${item.book.price}" minFractionDigits="2"/></strong>
                         </div>
-                        <form class="quantity-form" action="${pageContext.request.contextPath}/cart" method="post">
+                        <form class="quantity-form" action="${pageContext.request.contextPath}/cart" method="post" data-preserve-scroll>
                             <input type="hidden" name="action" value="update">
                             <input type="hidden" name="bookId" value="${item.book.id}">
                             <input name="quantity" type="number" min="1" max="${item.book.stock}" value="${item.quantity}">
                             <button class="ghost-button" type="submit">更新</button>
                         </form>
-                        <form action="${pageContext.request.contextPath}/cart" method="post">
+                        <form action="${pageContext.request.contextPath}/cart" method="post" data-preserve-scroll>
                             <input type="hidden" name="action" value="remove">
                             <input type="hidden" name="bookId" value="${item.book.id}">
                             <button class="text-button" type="submit">移除</button>
