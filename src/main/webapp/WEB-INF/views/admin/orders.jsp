@@ -30,7 +30,7 @@
         <article class="order-card reveal">
             <div class="order-head">
                 <div>
-                    <span class="eyebrow">${order.orderNo} · ${order.username}</span>
+                    <a class="eyebrow" href="${pageContext.request.contextPath}/order?id=${order.orderId}">${order.orderNo} · ${order.username}</a>
                     <h2>${order.statusText}</h2>
                     <p>${order.address}</p>
                     <p class="muted-text">下单时间 ${order.createdAtText}</p>

@@ -68,7 +68,7 @@ public class CheckoutServlet extends HttpServlet {
             request.getSession().setAttribute("orderSuccessNo", order.getOrderNo());
             request.getSession().setAttribute("orderSuccessTotal", order.getTotalPrice());
             request.getSession().setAttribute("toast", "订单已提交，订单号 " + order.getOrderNo());
-            response.sendRedirect(request.getContextPath() + "/orders");
+            response.sendRedirect(request.getContextPath() + "/checkout/success?orderId=" + order.getOrderId());
         } catch (SQLException e) {
             throw new ServletException("Failed to create order", e);
         }

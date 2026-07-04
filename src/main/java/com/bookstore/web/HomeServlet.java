@@ -5,6 +5,7 @@ import com.bookstore.dao.BrowsingHistoryDao;
 import com.bookstore.dao.FavoriteDao;
 import com.bookstore.model.Book;
 import com.bookstore.model.User;
+import com.bookstore.util.HighlightUtil;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -28,6 +29,7 @@ public class HomeServlet extends HttpServlet {
         String keyword = request.getParameter("keyword");
         try {
             List<Book> books = bookDao.findBooks(category, keyword);
+            applyHighlights(books, keyword);
             User user = (User) request.getSession().getAttribute("currentUser");
             if (user != null) {
                 historyDao.recordViews(user.getId(), books);
@@ -45,6 +47,14 @@ public class HomeServlet extends HttpServlet {
             request.getRequestDispatcher("/WEB-INF/views/home.jsp").forward(request, response);
         } catch (SQLException e) {
             throw new ServletException("Failed to load books", e);
+        }
+    }
+
+    private void applyHighlights(List<Book> books, String keyword) {
+        for (Book book : books) {
+            book.setHighlightedTitle(HighlightUtil.highlight(book.getTitle(), keyword));
+            book.setHighlightedAuthor(HighlightUtil.highlight(book.getAuthor(), keyword));
+            book.setHighlightedDescription(HighlightUtil.highlight(book.getDescription(), keyword));
         }
     }
 }

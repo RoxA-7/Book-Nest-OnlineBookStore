@@ -39,15 +39,21 @@
         <button class="search-button" type="submit">搜索</button>
     </form>
     <div class="account-actions">
-        <select class="theme-select" data-theme-select aria-label="选择主题配色">
-            <option value="light">浅色</option>
-            <option value="dark">深色</option>
-            <option value="ink">漆黑</option>
-            <option value="ochre">暖黄</option>
-            <option value="graphite">石墨</option>
-            <option value="olive">大禹</option>
-            <option value="rosewood">紫檀</option>
-        </select>
+        <div class="theme-menu" data-theme-menu>
+            <button class="theme-trigger" type="button" data-theme-trigger aria-expanded="false">
+                <span data-theme-label>浅色</span>
+                <span aria-hidden="true">⌄</span>
+            </button>
+            <div class="theme-options" data-theme-options>
+                <button type="button" data-theme-value="light"><span class="theme-dot light"></span>浅色</button>
+                <button type="button" data-theme-value="dark"><span class="theme-dot dark"></span>深色</button>
+                <button type="button" data-theme-value="ink"><span class="theme-dot ink"></span>漆黑</button>
+                <button type="button" data-theme-value="ochre"><span class="theme-dot ochre"></span>暖黄</button>
+                <button type="button" data-theme-value="graphite"><span class="theme-dot graphite"></span>石墨</button>
+                <button type="button" data-theme-value="olive"><span class="theme-dot olive"></span>大禹</button>
+                <button type="button" data-theme-value="rosewood"><span class="theme-dot rosewood"></span>紫檀</button>
+            </div>
+        </div>
         <c:choose>
             <c:when test="${not empty sessionScope.currentUser}">
                 <span class="user-chip">${sessionScope.currentUser.username}</span>

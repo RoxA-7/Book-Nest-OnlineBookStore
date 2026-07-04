@@ -60,6 +60,24 @@ public class OrderDao {
         return orders;
     }
 
+    public Order findById(long orderId) throws SQLException {
+        String sql = "SELECT o.order_id, COALESCE(o.order_no, '') AS order_no, o.user_id, u.username, o.total_price, o.status, o.address, "
+                + "COALESCE(o.payment_method, '') AS payment_method, o.create_time "
+                + "FROM orders o JOIN users u ON o.user_id = u.user_id WHERE o.order_id = ?";
+        List<Order> orders = queryOrders(sql, orderId);
+        fillItems(orders);
+        return orders.isEmpty() ? null : orders.get(0);
+    }
+
+    public Order findByIdForUser(long orderId, long userId) throws SQLException {
+        String sql = "SELECT o.order_id, COALESCE(o.order_no, '') AS order_no, o.user_id, u.username, o.total_price, o.status, o.address, "
+                + "COALESCE(o.payment_method, '') AS payment_method, o.create_time "
+                + "FROM orders o JOIN users u ON o.user_id = u.user_id WHERE o.order_id = ? AND o.user_id = ?";
+        List<Order> orders = queryOrders(sql, orderId, userId);
+        fillItems(orders);
+        return orders.isEmpty() ? null : orders.get(0);
+    }
+
     public List<Order> findAll(String status) throws SQLException {
         return findAll(status, "");
     }

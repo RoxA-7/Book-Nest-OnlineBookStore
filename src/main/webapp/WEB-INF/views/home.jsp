@@ -78,9 +78,9 @@
                     <span>${book.category}</span>
                     <c:if test="${book.featured}"><span>精选</span></c:if>
                 </div>
-                <h3>${book.title}</h3>
-                <p class="author">${book.author}</p>
-                <p class="description">${book.description}</p>
+                <h3><c:out value="${book.highlightedTitle}" escapeXml="false"/></h3>
+                <p class="author"><c:out value="${book.highlightedAuthor}" escapeXml="false"/></p>
+                <p class="description"><c:out value="${book.highlightedDescription}" escapeXml="false"/></p>
                 <div class="book-bottom">
                     <strong>￥<fmt:formatNumber value="${book.price}" minFractionDigits="2"/></strong>
                     <span>库存 ${book.stock}</span>

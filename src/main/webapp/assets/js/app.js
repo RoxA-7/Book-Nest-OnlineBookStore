@@ -3,15 +3,45 @@ const topbar = document.querySelector("[data-glass]");
 const savedTheme = window.localStorage.getItem("booknest-theme") || "light";
 document.body.dataset.theme = savedTheme;
 
-document.querySelectorAll("[data-theme-select]").forEach((select) => {
-    select.value = savedTheme;
-    if (select.value !== savedTheme) {
-        select.value = "light";
-        document.body.dataset.theme = "light";
-    }
-    select.addEventListener("change", () => {
-        document.body.dataset.theme = select.value;
-        window.localStorage.setItem("booknest-theme", select.value);
+const themeNames = {
+    light: "浅色",
+    dark: "深色",
+    ink: "漆黑",
+    ochre: "暖黄",
+    graphite: "石墨",
+    olive: "大禹",
+    rosewood: "紫檀"
+};
+
+document.querySelectorAll("[data-theme-menu]").forEach((menu) => {
+    const trigger = menu.querySelector("[data-theme-trigger]");
+    const label = menu.querySelector("[data-theme-label]");
+    const options = menu.querySelector("[data-theme-options]");
+    const syncLabel = () => {
+        label.textContent = themeNames[document.body.dataset.theme] || themeNames.light;
+        options.querySelectorAll("[data-theme-value]").forEach((button) => {
+            button.classList.toggle("active", button.dataset.themeValue === document.body.dataset.theme);
+        });
+    };
+    syncLabel();
+    trigger.addEventListener("click", () => {
+        const isOpen = menu.classList.toggle("open");
+        trigger.setAttribute("aria-expanded", String(isOpen));
+    });
+    options.querySelectorAll("[data-theme-value]").forEach((button) => {
+        button.addEventListener("click", () => {
+            document.body.dataset.theme = button.dataset.themeValue;
+            window.localStorage.setItem("booknest-theme", button.dataset.themeValue);
+            menu.classList.remove("open");
+            trigger.setAttribute("aria-expanded", "false");
+            syncLabel();
+        });
+    });
+    document.addEventListener("click", (event) => {
+        if (!menu.contains(event.target)) {
+            menu.classList.remove("open");
+            trigger.setAttribute("aria-expanded", "false");
+        }
     });
 });
 

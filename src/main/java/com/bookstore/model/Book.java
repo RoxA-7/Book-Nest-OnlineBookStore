@@ -14,6 +14,9 @@ public class Book {
     private String coverColor;
     private boolean featured;
     private LocalDateTime createdAt;
+    private String highlightedTitle;
+    private String highlightedAuthor;
+    private String highlightedDescription;
 
     public long getId() {
         return id;
@@ -93,6 +96,30 @@ public class Book {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getHighlightedTitle() {
+        return highlightedTitle == null ? title : highlightedTitle;
+    }
+
+    public void setHighlightedTitle(String highlightedTitle) {
+        this.highlightedTitle = highlightedTitle;
+    }
+
+    public String getHighlightedAuthor() {
+        return highlightedAuthor == null ? author : highlightedAuthor;
+    }
+
+    public void setHighlightedAuthor(String highlightedAuthor) {
+        this.highlightedAuthor = highlightedAuthor;
+    }
+
+    public String getHighlightedDescription() {
+        return highlightedDescription == null ? description : highlightedDescription;
+    }
+
+    public void setHighlightedDescription(String highlightedDescription) {
+        this.highlightedDescription = highlightedDescription;
     }
 }
 

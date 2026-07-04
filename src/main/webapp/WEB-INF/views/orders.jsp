@@ -26,7 +26,7 @@
                 <article class="order-card reveal">
                     <div class="order-head">
                         <div>
-                            <span class="eyebrow">${order.orderNo}</span>
+                            <a class="eyebrow" href="${pageContext.request.contextPath}/order?id=${order.orderId}">${order.orderNo}</a>
                             <h2>${order.statusText}</h2>
                             <p>${order.address}</p>
                             <p class="muted-text">下单时间 ${order.createdAtText}</p>
@@ -47,6 +47,7 @@
                     </div>
                     <form class="order-actions" action="${pageContext.request.contextPath}/orders" method="post">
                         <input type="hidden" name="orderId" value="${order.orderId}">
+                        <a class="ghost-button compact" href="${pageContext.request.contextPath}/order?id=${order.orderId}">详情</a>
                         <button class="ghost-button compact" type="submit">再次购买</button>
                     </form>
                 </article>
