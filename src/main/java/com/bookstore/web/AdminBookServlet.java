@@ -1,0 +1,85 @@
+package com.bookstore.web;
+
+import com.bookstore.dao.BookDao;
+import com.bookstore.model.Book;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.sql.SQLException;
+
+@WebServlet("/admin/books")
+public class AdminBookServlet extends HttpServlet {
+    private final BookDao bookDao = new BookDao();
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            request.setAttribute("books", bookDao.findAll());
+            request.setAttribute("categories", bookDao.findCategories());
+            request.setAttribute("bookCount", bookDao.countAll());
+            request.setAttribute("lowStockCount", bookDao.countLowStock());
+            request.getRequestDispatcher("/WEB-INF/views/admin/books.jsp").forward(request, response);
+        } catch (SQLException e) {
+            throw new ServletException("Failed to load admin books", e);
+        }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String action = request.getParameter("action");
+        try {
+            if ("delete".equals(action)) {
+                bookDao.delete(parseLong(request.getParameter("id")));
+                request.getSession().setAttribute("toast", "图书已删除");
+            } else if ("update".equals(action)) {
+                Book book = readBook(request);
+                book.setId(parseLong(request.getParameter("id")));
+                bookDao.update(book);
+                request.getSession().setAttribute("toast", "图书信息已更新");
+            } else {
+                bookDao.create(readBook(request));
+                request.getSession().setAttribute("toast", "新图书已上架");
+            }
+            response.sendRedirect(request.getContextPath() + "/admin/books");
+        } catch (SQLException | IllegalArgumentException e) {
+            request.setAttribute("error", "保存失败，请检查书名、价格和库存等字段");
+            doGet(request, response);
+        }
+    }
+
+    private Book readBook(HttpServletRequest request) {
+        Book book = new Book();
+        book.setTitle(required(request.getParameter("title")));
+        book.setAuthor(required(request.getParameter("author")));
+        book.setCategory(required(request.getParameter("category")));
+        book.setPrice(new BigDecimal(required(request.getParameter("price"))));
+        book.setStock(Integer.parseInt(required(request.getParameter("stock"))));
+        book.setDescription(required(request.getParameter("description")));
+        book.setCoverColor(required(request.getParameter("coverColor")));
+        book.setFeatured("on".equals(request.getParameter("featured")));
+        return book;
+    }
+
+    private String required(String value) {
+        if (value == null || value.trim().isEmpty()) {
+            throw new IllegalArgumentException("Required field is missing");
+        }
+        return value.trim();
+    }
+
+    private long parseLong(String value) {
+        try {
+            return Long.parseLong(value);
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+}
+

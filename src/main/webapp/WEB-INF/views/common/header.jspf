@@ -1,0 +1,47 @@
+<%@ page pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${empty pageTitle ? 'Online Bookstore' : pageTitle}</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css">
+    <script defer src="${pageContext.request.contextPath}/assets/js/app.js"></script>
+</head>
+<body>
+<header class="topbar" data-glass>
+    <a class="brand" href="${pageContext.request.contextPath}/books" aria-label="Online Bookstore">
+        <span class="brand-mark">B</span>
+        <span>
+            <strong>Book Nest</strong>
+            <small>Online Bookstore</small>
+        </span>
+    </a>
+    <nav class="nav-links" aria-label="主导航">
+        <a href="${pageContext.request.contextPath}/books">书店</a>
+        <a href="${pageContext.request.contextPath}/cart">书单<c:if test="${not empty sessionScope.cart}"><span class="nav-count">${sessionScope.cart.size()}</span></c:if></a>
+        <c:if test="${not empty sessionScope.currentUser && sessionScope.currentUser.admin}">
+            <a href="${pageContext.request.contextPath}/admin/books">后台</a>
+        </c:if>
+    </nav>
+    <div class="account-actions">
+        <c:choose>
+            <c:when test="${not empty sessionScope.currentUser}">
+                <span class="user-chip">${sessionScope.currentUser.username}</span>
+                <form action="${pageContext.request.contextPath}/logout" method="post">
+                    <button class="ghost-button" type="submit">退出</button>
+                </form>
+            </c:when>
+            <c:otherwise>
+                <a class="ghost-button" href="${pageContext.request.contextPath}/login">登录</a>
+                <a class="primary-button compact" href="${pageContext.request.contextPath}/register">注册</a>
+            </c:otherwise>
+        </c:choose>
+    </div>
+</header>
+<main class="page-shell">
+<c:if test="${not empty sessionScope.toast}">
+    <div class="toast" data-toast>${sessionScope.toast}</div>
+    <c:remove var="toast" scope="session"/>
+</c:if>

@@ -1,0 +1,9 @@
+<%@ page pageEncoding="UTF-8" %>
+</main>
+<footer class="footer">
+    <span>Book Nest</span>
+    <span>JSP · Servlet · JDBC</span>
+</footer>
+</body>
+</html>
+
