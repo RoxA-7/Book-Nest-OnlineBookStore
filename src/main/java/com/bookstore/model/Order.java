@@ -2,11 +2,13 @@ package com.bookstore.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Order {
     private long orderId;
+    private String orderNo;
     private long userId;
     private String username;
     private BigDecimal totalPrice;
@@ -22,6 +24,14 @@ public class Order {
 
     public void setOrderId(long orderId) {
         this.orderId = orderId;
+    }
+
+    public String getOrderNo() {
+        return orderNo;
+    }
+
+    public void setOrderNo(String orderNo) {
+        this.orderNo = orderNo;
     }
 
     public long getUserId() {
@@ -102,5 +112,12 @@ public class Order {
             return "已取消";
         }
         return "待处理";
+    }
+
+    public String getCreatedAtText() {
+        if (createdAt == null) {
+            return "";
+        }
+        return createdAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
     }
 }

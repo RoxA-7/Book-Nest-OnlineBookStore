@@ -13,11 +13,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 public class OrderDao {
-    public long createOrder(long userId, CartSummary summary, String address, String paymentMethod) throws SQLException {
+    public Order createOrder(long userId, CartSummary summary, String address, String paymentMethod) throws SQLException {
         if (summary.getItems().isEmpty()) {
             throw new SQLException("Cart is empty");
         }
@@ -26,11 +27,20 @@ public class OrderDao {
             connection.setAutoCommit(false);
             try {
                 long orderId = insertOrder(connection, userId, summary, address, paymentMethod);
+                String orderNo = generateOrderNo(orderId);
+                updateOrderNo(connection, orderId, orderNo);
                 insertOrderItems(connection, orderId, summary);
                 reduceStock(connection, summary);
                 clearCart(connection, userId);
                 connection.commit();
-                return orderId;
+                Order order = new Order();
+                order.setOrderId(orderId);
+                order.setOrderNo(orderNo);
+                order.setTotalPrice(summary.getTotalPrice());
+                order.setStatus("Paid");
+                order.setAddress(address);
+                order.setPaymentMethod(paymentMethod);
+                return order;
             } catch (SQLException e) {
                 connection.rollback();
                 throw e;
@@ -41,7 +51,7 @@ public class OrderDao {
     }
 
     public List<Order> findByUser(long userId) throws SQLException {
-        String sql = "SELECT o.order_id, o.user_id, u.username, o.total_price, o.status, o.address, "
+        String sql = "SELECT o.order_id, COALESCE(o.order_no, '') AS order_no, o.user_id, u.username, o.total_price, o.status, o.address, "
                 + "COALESCE(o.payment_method, '') AS payment_method, o.create_time "
                 + "FROM orders o JOIN users u ON o.user_id = u.user_id "
                 + "WHERE o.user_id = ? ORDER BY o.create_time DESC, o.order_id DESC";
@@ -51,19 +61,44 @@ public class OrderDao {
     }
 
     public List<Order> findAll(String status) throws SQLException {
-        StringBuilder sql = new StringBuilder("SELECT o.order_id, o.user_id, u.username, o.total_price, o.status, "
+        return findAll(status, "");
+    }
+
+    public List<Order> findAll(String status, String keyword) throws SQLException {
+        StringBuilder sql = new StringBuilder("SELECT o.order_id, COALESCE(o.order_no, '') AS order_no, o.user_id, u.username, o.total_price, o.status, "
                 + "o.address, COALESCE(o.payment_method, '') AS payment_method, o.create_time "
                 + "FROM orders o JOIN users u ON o.user_id = u.user_id WHERE 1=1");
-        List<Order> orders;
+        List<Object> params = new ArrayList<>();
         if (status != null && !status.isBlank()) {
-            sql.append(" AND o.status = ? ORDER BY o.create_time DESC, o.order_id DESC");
-            orders = queryOrders(sql.toString(), status);
-        } else {
-            sql.append(" ORDER BY o.create_time DESC, o.order_id DESC");
-            orders = queryOrders(sql.toString());
+            sql.append(" AND o.status = ?");
+            params.add(status);
         }
+        if (keyword != null && !keyword.isBlank()) {
+            sql.append(" AND (LOWER(COALESCE(o.order_no, '')) LIKE ? OR LOWER(u.username) LIKE ?)");
+            String like = "%" + keyword.trim().toLowerCase() + "%";
+            params.add(like);
+            params.add(like);
+        }
+        sql.append(" ORDER BY o.create_time DESC, o.order_id DESC");
+        List<Order> orders = queryOrders(sql.toString(), params.toArray());
         fillItems(orders);
         return orders;
+    }
+
+    public long countByUser(long userId) throws SQLException {
+        return queryLong("SELECT COUNT(*) FROM orders WHERE user_id = ?", userId);
+    }
+
+    public long countAll() throws SQLException {
+        return queryLong("SELECT COUNT(*) FROM orders");
+    }
+
+    public java.math.BigDecimal totalRevenue() throws SQLException {
+        try (Connection connection = DBUtil.getConnection();
+             PreparedStatement statement = connection.prepareStatement("SELECT COALESCE(SUM(total_price), 0) FROM orders WHERE status <> 'Cancelled'");
+             ResultSet rs = statement.executeQuery()) {
+            return rs.next() ? rs.getBigDecimal(1) : java.math.BigDecimal.ZERO;
+        }
     }
 
     public void updateStatus(long orderId, String status) throws SQLException {
@@ -93,6 +128,18 @@ public class OrderDao {
             }
         }
         throw new SQLException("Failed to create order");
+    }
+
+    private void updateOrderNo(Connection connection, long orderId, String orderNo) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement("UPDATE orders SET order_no = ? WHERE order_id = ?")) {
+            statement.setString(1, orderNo);
+            statement.setLong(2, orderId);
+            statement.executeUpdate();
+        }
+    }
+
+    private String generateOrderNo(long orderId) {
+        return "BN" + java.time.LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE) + "-" + String.format("%06d", orderId);
     }
 
     private void insertOrderItems(Connection connection, long orderId, CartSummary summary) throws SQLException {
@@ -144,6 +191,18 @@ public class OrderDao {
         return orders;
     }
 
+    private long queryLong(String sql, Object... params) throws SQLException {
+        try (Connection connection = DBUtil.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            for (int i = 0; i < params.length; i++) {
+                statement.setObject(i + 1, params[i]);
+            }
+            try (ResultSet rs = statement.executeQuery()) {
+                return rs.next() ? rs.getLong(1) : 0;
+            }
+        }
+    }
+
     private void fillItems(List<Order> orders) throws SQLException {
         for (Order order : orders) {
             order.setItems(findItems(order.getOrderId()));
@@ -173,6 +232,8 @@ public class OrderDao {
     private Order mapOrder(ResultSet rs) throws SQLException {
         Order order = new Order();
         order.setOrderId(rs.getLong("order_id"));
+        String orderNo = rs.getString("order_no");
+        order.setOrderNo(orderNo == null || orderNo.isBlank() ? "#" + order.getOrderId() : orderNo);
         order.setUserId(rs.getLong("user_id"));
         order.setUsername(rs.getString("username"));
         order.setTotalPrice(rs.getBigDecimal("total_price"));
@@ -194,7 +255,7 @@ public class OrderDao {
         book.setCategory(rs.getString("category_name"));
         book.setDescription(rs.getString("description"));
         book.setStock(rs.getInt("stock"));
-        book.setCoverColor("linear-gradient(145deg, #8fb7ff, #4d73c8)");
+        book.setCoverColor(BookDao.coverColorFor(book.getCategory()));
 
         OrderItem item = new OrderItem();
         item.setItemId(rs.getLong("item_id"));

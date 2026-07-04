@@ -43,6 +43,7 @@ CREATE TABLE IF NOT EXISTS cart (
 
 CREATE TABLE IF NOT EXISTS orders (
     order_id INT PRIMARY KEY AUTO_INCREMENT,
+    order_no VARCHAR(32) UNIQUE,
     user_id INT NOT NULL,
     total_price DECIMAL(10, 2),
     status VARCHAR(20) DEFAULT 'Pending',
@@ -60,6 +61,27 @@ CREATE TABLE IF NOT EXISTS order_items (
     price DECIMAL(10, 2) NOT NULL,
     CONSTRAINT order_items_ibfk_1 FOREIGN KEY (order_id) REFERENCES orders(order_id),
     CONSTRAINT order_items_ibfk_2 FOREIGN KEY (book_id) REFERENCES books(book_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS favorites (
+    favorite_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    book_id INT NOT NULL,
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY favorites_user_book (user_id, book_id),
+    CONSTRAINT favorites_ibfk_1 FOREIGN KEY (user_id) REFERENCES users(user_id),
+    CONSTRAINT favorites_ibfk_2 FOREIGN KEY (book_id) REFERENCES books(book_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS browsing_history (
+    history_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    book_id INT NOT NULL,
+    view_count INT DEFAULT 1,
+    last_viewed DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY history_user_book (user_id, book_id),
+    CONSTRAINT browsing_history_ibfk_1 FOREIGN KEY (user_id) REFERENCES users(user_id),
+    CONSTRAINT browsing_history_ibfk_2 FOREIGN KEY (book_id) REFERENCES books(book_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO users (user_id, username, password, email, role)

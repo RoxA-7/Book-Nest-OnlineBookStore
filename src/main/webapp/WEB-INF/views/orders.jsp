@@ -26,9 +26,10 @@
                 <article class="order-card reveal">
                     <div class="order-head">
                         <div>
-                            <span class="eyebrow">#${order.orderId}</span>
+                            <span class="eyebrow">${order.orderNo}</span>
                             <h2>${order.statusText}</h2>
                             <p>${order.address}</p>
+                            <p class="muted-text">下单时间 ${order.createdAtText}</p>
                         </div>
                         <div class="order-total">
                             <span>${order.paymentMethod}</span>
@@ -44,6 +45,10 @@
                             </div>
                         </c:forEach>
                     </div>
+                    <form class="order-actions" action="${pageContext.request.contextPath}/orders" method="post">
+                        <input type="hidden" name="orderId" value="${order.orderId}">
+                        <button class="ghost-button compact" type="submit">再次购买</button>
+                    </form>
                 </article>
             </c:forEach>
         </section>

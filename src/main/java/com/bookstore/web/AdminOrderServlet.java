@@ -19,10 +19,12 @@ public class AdminOrderServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String status = trim(request.getParameter("status"));
+        String keyword = trim(request.getParameter("keyword"));
         try {
             request.setAttribute("currentPage", "adminOrders");
             request.setAttribute("selectedStatus", status);
-            request.setAttribute("orders", orderDao.findAll(status));
+            request.setAttribute("keyword", keyword);
+            request.setAttribute("orders", orderDao.findAll(status, keyword));
             request.getRequestDispatcher("/WEB-INF/views/admin/orders.jsp").forward(request, response);
         } catch (SQLException e) {
             throw new ServletException("Failed to load admin orders", e);

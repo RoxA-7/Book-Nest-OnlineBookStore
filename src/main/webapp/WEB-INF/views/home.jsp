@@ -85,6 +85,19 @@
                     <strong>￥<fmt:formatNumber value="${book.price}" minFractionDigits="2"/></strong>
                     <span>库存 ${book.stock}</span>
                 </div>
+                <div class="book-actions">
+                    <a class="ghost-button compact" href="${pageContext.request.contextPath}/book?id=${book.id}">详情</a>
+                    <form action="${pageContext.request.contextPath}/favorites" method="post">
+                        <input type="hidden" name="bookId" value="${book.id}">
+                        <input type="hidden" name="returnTo" value="${pageContext.request.contextPath}/books">
+                        <button class="ghost-button compact" type="submit">
+                            <c:choose>
+                                <c:when test="${not empty favoriteBookIds && favoriteBookIds.contains(book.id)}">已收藏</c:when>
+                                <c:otherwise>收藏</c:otherwise>
+                            </c:choose>
+                        </button>
+                    </form>
+                </div>
                 <form action="${pageContext.request.contextPath}/cart" method="post">
                     <input type="hidden" name="action" value="add">
                     <input type="hidden" name="bookId" value="${book.id}">
@@ -94,6 +107,24 @@
         </article>
     </c:forEach>
 </section>
+
+<c:if test="${not empty recentHistory}">
+    <section class="toolbar reveal">
+        <div>
+            <span class="eyebrow">Recent</span>
+            <h2>最近浏览</h2>
+        </div>
+        <a class="ghost-button" href="${pageContext.request.contextPath}/insights">查看统计</a>
+    </section>
+    <section class="history-strip reveal">
+        <c:forEach items="${recentHistory}" var="record">
+            <a class="history-pill" href="${pageContext.request.contextPath}/book?id=${record.book.id}">
+                <strong>${record.book.title}</strong>
+                <span>${record.lastViewedText}</span>
+            </a>
+        </c:forEach>
+    </section>
+</c:if>
 
 <c:if test="${empty books}">
     <section class="empty-state reveal">

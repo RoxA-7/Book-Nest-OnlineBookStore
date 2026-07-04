@@ -30,7 +30,7 @@
                             <span>${fn:substring(item.book.title, 0, 1)}</span>
                         </div>
                         <div class="cart-main">
-                            <h3>${item.book.title}</h3>
+                            <h3><a href="${pageContext.request.contextPath}/book?id=${item.book.id}">${item.book.title}</a></h3>
                             <p>${item.book.author} · ${item.book.category}</p>
                             <strong>￥<fmt:formatNumber value="${item.book.price}" minFractionDigits="2"/></strong>
                         </div>

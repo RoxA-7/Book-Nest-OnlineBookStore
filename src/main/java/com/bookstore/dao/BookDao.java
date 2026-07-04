@@ -61,6 +61,15 @@ public class BookDao {
         return books.stream().findFirst();
     }
 
+    public List<Book> findRelated(String category, long excludedBookId, int limit) throws SQLException {
+        String sql = BOOK_SELECT + " WHERE c.category_name = ? AND b.book_id <> ? ORDER BY b.book_id ASC LIMIT ?";
+        return queryBooks(sql, List.of(category, excludedBookId, limit));
+    }
+
+    public long countCategories() throws SQLException {
+        return queryLong("SELECT COUNT(*) FROM categories");
+    }
+
     public long countAll() throws SQLException {
         return queryLong("SELECT COUNT(*) FROM books");
     }
@@ -175,23 +184,23 @@ public class BookDao {
         return book;
     }
 
-    private String coverColorFor(String category) {
+    public static String coverColorFor(String category) {
         switch (category) {
             case "Computer Science":
             case "编程技术":
-                return "linear-gradient(145deg, #8fb7ff, #4d73c8)";
+                return "linear-gradient(145deg, #9ca7ad, #56616a)";
             case "Literature":
             case "文学小说":
-                return "linear-gradient(145deg, #f5b8c7, #c95d76)";
+                return "linear-gradient(145deg, #b7a89b, #786b60)";
             case "Economics":
             case "商业管理":
-                return "linear-gradient(145deg, #b8d7f0, #5d93c9)";
+                return "linear-gradient(145deg, #a8aca0, #676d60)";
             case "History":
-                return "linear-gradient(145deg, #f0d9a6, #c69853)";
+                return "linear-gradient(145deg, #b7a17f, #76664f)";
             case "Science":
-                return "linear-gradient(145deg, #9dd8c8, #3f9d87)";
+                return "linear-gradient(145deg, #a2afa7, #5d6b63)";
             default:
-                return "linear-gradient(145deg, #f3b27c, #d96f45)";
+                return "linear-gradient(145deg, #b0a79c, #655f58)";
         }
     }
 }

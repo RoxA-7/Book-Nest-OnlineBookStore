@@ -45,6 +45,8 @@ public final class DBUtil {
                 }
             }
             ensureOrderPaymentMethodColumn(connection);
+            ensureOrderNoColumn(connection);
+            backfillOrderNumbers(connection);
         }
     }
 
@@ -57,6 +59,25 @@ public final class DBUtil {
         }
         try (Statement statement = connection.createStatement()) {
             statement.execute("ALTER TABLE orders ADD COLUMN payment_method VARCHAR(50) DEFAULT 'Online Payment'");
+        }
+    }
+
+    private static void ensureOrderNoColumn(Connection connection) throws SQLException {
+        DatabaseMetaData metaData = connection.getMetaData();
+        try (ResultSet columns = metaData.getColumns(connection.getCatalog(), null, "orders", "order_no")) {
+            if (columns.next()) {
+                return;
+            }
+        }
+        try (Statement statement = connection.createStatement()) {
+            statement.execute("ALTER TABLE orders ADD COLUMN order_no VARCHAR(32) UNIQUE AFTER order_id");
+        }
+    }
+
+    private static void backfillOrderNumbers(Connection connection) throws SQLException {
+        try (Statement statement = connection.createStatement()) {
+            statement.execute("UPDATE orders SET order_no = CONCAT('BN', DATE_FORMAT(COALESCE(create_time, NOW()), '%Y%m%d'), '-', LPAD(order_id, 6, '0')) "
+                    + "WHERE order_no IS NULL OR order_no = ''");
         }
     }
 

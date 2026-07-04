@@ -3,6 +3,7 @@ package com.bookstore.web;
 import com.bookstore.dao.CartDao;
 import com.bookstore.dao.OrderDao;
 import com.bookstore.model.CartSummary;
+import com.bookstore.model.Order;
 import com.bookstore.model.User;
 
 import jakarta.servlet.ServletException;
@@ -63,8 +64,10 @@ public class CheckoutServlet extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/cart");
                 return;
             }
-            long orderId = orderDao.createOrder(user.getId(), summary, address, paymentMethod);
-            request.getSession().setAttribute("toast", "订单已提交，订单号 #" + orderId);
+            Order order = orderDao.createOrder(user.getId(), summary, address, paymentMethod);
+            request.getSession().setAttribute("orderSuccessNo", order.getOrderNo());
+            request.getSession().setAttribute("orderSuccessTotal", order.getTotalPrice());
+            request.getSession().setAttribute("toast", "订单已提交，订单号 " + order.getOrderNo());
             response.sendRedirect(request.getContextPath() + "/orders");
         } catch (SQLException e) {
             throw new ServletException("Failed to create order", e);

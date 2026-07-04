@@ -11,12 +11,14 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
-@WebServlet("/books")
-public class HomeServlet extends HttpServlet {
+@WebServlet("/book")
+public class BookDetailServlet extends HttpServlet {
     private final BookDao bookDao = new BookDao();
     private final FavoriteDao favoriteDao = new FavoriteDao();
     private final BrowsingHistoryDao historyDao = new BrowsingHistoryDao();
@@ -24,28 +26,32 @@ public class HomeServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String category = request.getParameter("category");
-        String keyword = request.getParameter("keyword");
+        long bookId = parseLong(request.getParameter("id"));
         try {
-            List<Book> books = bookDao.findBooks(category, keyword);
+            Optional<Book> book = bookDao.findById(bookId);
+            if (book.isEmpty()) {
+                response.sendRedirect(request.getContextPath() + "/books");
+                return;
+            }
             User user = (User) request.getSession().getAttribute("currentUser");
             if (user != null) {
-                historyDao.recordViews(user.getId(), books);
+                historyDao.recordViews(user.getId(), List.of(book.get()));
                 request.setAttribute("favoriteBookIds", favoriteDao.findFavoriteBookIds(user.getId()));
-                request.setAttribute("recentHistory", historyDao.findRecentByUser(user.getId(), 3));
             }
             request.setAttribute("currentPage", "books");
-            request.setAttribute("books", books);
-            request.setAttribute("featuredBooks", bookDao.findFeatured());
-            request.setAttribute("categories", bookDao.findCategories());
-            request.setAttribute("bookCount", bookDao.countAll());
-            request.setAttribute("selectedCategory", category == null ? "" : category);
-            request.setAttribute("keyword", keyword == null ? "" : keyword);
-            request.setAttribute("headerKeyword", keyword == null ? "" : keyword);
-            request.getRequestDispatcher("/WEB-INF/views/home.jsp").forward(request, response);
+            request.setAttribute("book", book.get());
+            request.setAttribute("relatedBooks", bookDao.findRelated(book.get().getCategory(), book.get().getId(), 4));
+            request.getRequestDispatcher("/WEB-INF/views/book-detail.jsp").forward(request, response);
         } catch (SQLException e) {
-            throw new ServletException("Failed to load books", e);
+            throw new ServletException("Failed to load book detail", e);
+        }
+    }
+
+    private long parseLong(String value) {
+        try {
+            return Long.parseLong(value);
+        } catch (NumberFormatException e) {
+            return 0;
         }
     }
 }
-

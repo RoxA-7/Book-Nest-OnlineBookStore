@@ -13,6 +13,7 @@
 </section>
 
 <form class="admin-filter reveal" action="${pageContext.request.contextPath}/admin/orders" method="get">
+    <input name="keyword" value="${keyword}" placeholder="搜索订单号或用户名">
     <select name="status">
         <option value="">全部订单</option>
         <option value="Paid" <c:if test="${selectedStatus == 'Paid'}">selected</c:if>>已支付，待发货</option>
@@ -29,9 +30,10 @@
         <article class="order-card reveal">
             <div class="order-head">
                 <div>
-                    <span class="eyebrow">#${order.orderId} · ${order.username}</span>
+                    <span class="eyebrow">${order.orderNo} · ${order.username}</span>
                     <h2>${order.statusText}</h2>
                     <p>${order.address}</p>
+                    <p class="muted-text">下单时间 ${order.createdAtText}</p>
                 </div>
                 <div class="order-total">
                     <span>${order.paymentMethod}</span>

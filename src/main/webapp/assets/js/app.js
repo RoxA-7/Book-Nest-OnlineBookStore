@@ -1,5 +1,20 @@
 const topbar = document.querySelector("[data-glass]");
 
+const savedTheme = window.localStorage.getItem("booknest-theme") || "light";
+document.body.dataset.theme = savedTheme;
+
+document.querySelectorAll("[data-theme-select]").forEach((select) => {
+    select.value = savedTheme;
+    if (select.value !== savedTheme) {
+        select.value = "light";
+        document.body.dataset.theme = "light";
+    }
+    select.addEventListener("change", () => {
+        document.body.dataset.theme = select.value;
+        window.localStorage.setItem("booknest-theme", select.value);
+    });
+});
+
 const syncTopbar = () => {
     if (!topbar) {
         return;
@@ -27,6 +42,17 @@ document.querySelectorAll("[data-toast]").forEach((toast) => {
         toast.style.transform = "translateY(-8px)";
     }, 2600);
     window.setTimeout(() => toast.remove(), 3100);
+});
+
+document.querySelectorAll("[data-modal]").forEach((modal) => {
+    modal.querySelectorAll("[data-modal-close]").forEach((button) => {
+        button.addEventListener("click", () => modal.remove());
+    });
+    modal.addEventListener("click", (event) => {
+        if (event.target === modal) {
+            modal.remove();
+        }
+    });
 });
 
 document.querySelectorAll(".book-card").forEach((card) => {
